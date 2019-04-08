@@ -1,0 +1,174 @@
+<html>
+<head>
+    <title>ajax练习</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body>
+    <h1>员工查询</h1>
+    <label>请输入员工编号：</label>
+    <input type="text" id="keyword"><br>
+    <button id="search">查询</button>
+    <p id="serachResult"></p>
+
+    <h1>员工创建</h1>
+    <label>请输入员工名字：</label>
+    <input type="text" id="staffName"><br>
+    <label>请输入员工编号：</label>
+    <input type="text" id="staffNumber"><br>
+    <label>请输入员工性别：</label>
+    <select id="staffSex">
+        <option>男</option>
+        <option>女</option>
+    </select><br>
+    <label>请输入员工职位：</label>
+    <input type="text" id="staffJob"><br>
+    <button id="save">保存</button>
+    <p id="createResult"></p>
+
+    <h1>员工信息更改</h1>
+    编号：<input type="text" id="changeNumber" style="width: 30px;">
+    <select id="changeStatus">
+        <option value="name">姓名</option>
+        <option value="sex">性别</option>
+        <option value="job">职位</option>
+    </select>
+    改为：<input type="text" id="changeMsg"/>
+    <button id="change">改变</button>
+    <p id="staffChangeMsg"></p>
+
+    <h1>员工信息删除</h1>
+    编号：<input type="text" id="deleteNumber" style="width: 30px">
+    <button id="delete">删除</button>
+    <p id="staffDeleteMsg"></p>
+</body>
+</html>
+
+<script src="./js/jquery-3.3.1.js"></script>
+<script>
+// 原生ajax请求
+// document.getElementById("search").onclick = function(){
+//     //发送Ajax 查询请求并处理
+//     var request = new XMLHttpRequest()
+//     request.open("GET","service.php?number="+document.getElementById("keyword").value)//发送数据
+//     request.send()
+//     request.onreadystatechange = function () {
+//         if (request.readyState === 4){
+//             if (request.status == 200){
+//                 document.getElementById("serachResult").innerHTML = request.responseText
+//             } else{
+//                 alert("发送错误"+request.status);
+//             }
+//         }
+//     }
+// }
+// document.getElementById("save").onclick = function(){
+//     //发送Ajax 查询请求并处理
+//     var request = new XMLHttpRequest()
+//     request.open("POST","service.php")//发送数据
+//     const data = "name="+document.getElementById("staffName").value
+//                 +"&number="+document.getElementById("staffNumber").value
+//                 +"&sex="+document.getElementById("staffSex").value
+//                 +"&job="+document.getElementById("staffJob").value
+//     request.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+//     request.send(data)
+//     request.onreadystatechange = function () {
+//         if (request.readyState === 4){
+//             if (request.status == 200){
+//                 document.getElementById("createResult").innerHTML = request.responseText
+//             } else{
+//                 alert("发送错误"+request.status);
+//             }
+//         }
+//     }
+// }
+
+$(document).ready(function () {
+    //查询
+    $("#search").click(function () {
+        $.ajax({
+            type:"GET",
+            url:"http://ajax.php.me/service.php?number="+$("#keyword").val(),
+            dataType:"json",
+            success:function (data) {
+                if (data.success){
+                    $("#serachResult").html(data.msg);
+                } else{
+                    $("#serachResult").html("出现错误："+data.msg);
+                }
+            },
+            error:function (jqXHR) {
+                alert("发生错误:"+jqXHR.status)
+            }
+        })
+    })
+    //保存
+    $("#save").click(function () {
+        $.ajax({
+            type:"POST",
+            url:"http://ajax.php.me/service.php",
+            dataType:"json",
+            data:{
+                name:$("#staffName").val(),
+                number:$("#staffNumber").val(),
+                sex:$("#staffSex").val(),
+                job:$("#staffJob").val(),
+            },
+            success:function (data) {
+                if (data.success){
+                    $("#createResult").html(data.msg);
+                } else{
+                    $("#createResult").html("出现错误："+data.msg);
+                }
+            },
+            error:function (jqXHR) {
+                alert("发生错误:"+jqXHR.status)
+            }
+        })
+    })
+    //更改
+    $("#change").click(function () {
+        $.ajax({
+            type:"put",
+            url:"http://ajax.php.me/service.php",
+            dataType: 'text',
+            data: {
+                number:$("#changeNumber").val(),
+                status:$("#changeStatus").val(),
+                msg:$("#changeMsg").val(),
+            },
+            success: function (data) {
+                $("#staffChangeMsg").html(data);
+            },
+            error:function (jqXHR) {
+                alert('发生错误：'.jqXHR.status);
+            }
+        })
+    })
+    //删除
+    $("#delete").click(function () {
+        $.ajax({
+            type:'delete',
+            url:'http://ajax.php.me/service.php',
+            dataType:'text',
+            data:{
+                number:$("#deleteNumber").val()
+            },
+            success:function (data) {
+                $("#staffDeleteMsg").html(data);
+            },
+            error:function (jqXHR) {
+                alert('发生错误：'.jqXHR.status);
+            }
+        })
+    })
+
+})
+
+
+
+</script>
+
+<style>
+
+</style>

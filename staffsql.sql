@@ -1,0 +1,1 @@
+﻿insert into staff values('小美',6,'女','擦阳台')
